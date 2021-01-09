@@ -21,7 +21,7 @@ public class StocksServiceController {
         return stockStateRepoitory.findAll();
     }
 
-    @PostMapping("/stocks") 
+    @PostMapping("/stocks")
     StockState newStockState(@RequestBody StockState stockState) {
         return stockStateRepoitory.save(stockState);
     }
