@@ -5,7 +5,7 @@ FROM openjdk:11-jdk-slim
 COPY ./target/ /usr/src/inv-stocks-service/
 WORKDIR /usr/src/inv-stocks-service
 
-RUN apk add tzdata
+#RUN apk add tzdata
 RUN cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 RUN echo "Europe/Moscow" >  /etc/timezone
 
