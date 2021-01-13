@@ -50,6 +50,7 @@ pipeline {
                         ' -e DB_USR=$DB_USR' +
                         ' -e DB_PASSWORD=$DB_PASSWORD' +
                         ' -e DB_SCHEMA=$DB_SCHEMA' +
+                        ' -e TC_API_KEY=TC_API_KEY' +
                         ' -p 8080:8080' +
                         ' vladislavduma/inv-stocks-service:latest'
             }
