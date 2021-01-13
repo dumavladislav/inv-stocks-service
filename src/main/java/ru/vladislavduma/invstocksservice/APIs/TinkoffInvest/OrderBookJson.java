@@ -1,4 +1,4 @@
-package ru.vladislavduma.invstocksservice.TinkoffInvest;
+package ru.vladislavduma.invstocksservice.APIs.TinkoffInvest;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

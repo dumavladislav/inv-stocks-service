@@ -3,8 +3,7 @@ package ru.vladislavduma.invstocksservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import ru.vladislavduma.invstocksservice.TinkoffInvest.TinkoffApi;
-import ru.vladislavduma.invstocksservice.persistence.DAO.StockNotFoundException;
+import ru.vladislavduma.invstocksservice.APIs.TinkoffInvest.TinkoffApi;
 import ru.vladislavduma.invstocksservice.persistence.datamodel.StockState;
 import ru.vladislavduma.invstocksservice.persistence.repositories.StockStateRepoitory;
 
