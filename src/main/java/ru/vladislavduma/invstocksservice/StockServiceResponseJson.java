@@ -1,10 +1,14 @@
 package ru.vladislavduma.invstocksservice;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import ru.vladislavduma.invstocksservice.ErrorHandling.StockServiceError;
 
 import java.util.List;
 
+@Component
+@Scope("prototype")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StockServiceResponseJson {
 

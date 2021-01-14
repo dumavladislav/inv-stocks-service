@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -14,6 +15,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import ru.vladislavduma.invstocksservice.APIs.JWTTemplate;
+import ru.vladislavduma.invstocksservice.ApplicationContextProvider;
 import ru.vladislavduma.invstocksservice.ErrorHandling.StockServiceError;
 import ru.vladislavduma.invstocksservice.ErrorHandling.TickerNotFoundException;
 import ru.vladislavduma.invstocksservice.InstrumentData;
@@ -34,6 +36,9 @@ public class TCSApi extends JWTTemplate {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private ApplicationContextProvider appContextProvider;
 
     @Value("${tinkoff.baseUrl}")
     private String baseUrl;
@@ -72,7 +77,7 @@ public class TCSApi extends JWTTemplate {
                 logger.info(responseOrderBook.getBody().getPayload().toString());
 
                 List<InstrumentData> instrumentsList = new ArrayList<InstrumentData>();
-                instrumentsList.add(new InstrumentData(
+                instrumentsList.add((InstrumentData)appContextProvider.getContext().getBean(InstrumentData.class,
                         instrumentJson.getFigi(),
                         instrumentJson.getTicker(),
                         instrumentJson.getIsin(),
@@ -84,22 +89,22 @@ public class TCSApi extends JWTTemplate {
                         responseOrderBook.getBody().getPayload().getLastPrice()
                 ));
 
-                return new StockServiceResponseJson(
+                return (StockServiceResponseJson)appContextProvider.getContext().getBean(StockServiceResponseJson.class,
                         null,
                         "OK",
                         instrumentsList
                 );
             }
-            else throw new TickerNotFoundException();
+            else throw (TickerNotFoundException)appContextProvider.getContext().getBean(TickerNotFoundException.class);
         }
         catch (RestClientException e) {
-            return new StockServiceResponseJson(
+            return (StockServiceResponseJson)appContextProvider.getContext().getBean(StockServiceResponseJson.class,
                     null,
                     "ERROR",
                     new StockServiceError("TCS_ERR_001", "Tinkoff Service Error"));
         }
         catch (Exception e) {
-            return new StockServiceResponseJson(
+            return (StockServiceResponseJson)appContextProvider.getContext().getBean(StockServiceResponseJson.class,
                     null,
                     "ERROR",
                     new StockServiceError("ERR", e.getMessage()));

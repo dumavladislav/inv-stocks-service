@@ -1,5 +1,10 @@
 package ru.vladislavduma.invstocksservice.ErrorHandling;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Component
+@Scope("prototype")
 public class StockServiceError {
     private String errorCode;
     private String errorMessage;
