@@ -3,7 +3,8 @@ package ru.vladislavduma.invstocksservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import ru.vladislavduma.invstocksservice.APIs.TinkoffInvest.TinkoffApi;
+import ru.vladislavduma.invstocksservice.APIs.TinkoffInvest.TCSApi;
+import ru.vladislavduma.invstocksservice.APIs.TinkoffInvest.TCSSearchByTickerResponseJson;
 import ru.vladislavduma.invstocksservice.persistence.datamodel.StockState;
 import ru.vladislavduma.invstocksservice.persistence.repositories.StockStateRepoitory;
 
@@ -16,7 +17,7 @@ public class StocksServiceController {
     StockStateRepoitory stockStateRepoitory;
 
     @Autowired
-    private TinkoffApi tinkoffApi;
+    private TCSApi tinkoffApi;
 
     StocksServiceController(StockStateRepoitory stockStateRepoitory) {
         this.stockStateRepoitory = stockStateRepoitory;
@@ -24,7 +25,6 @@ public class StocksServiceController {
 
     @GetMapping("/stocks")
     List<StockState> all() {
-        tinkoffApi.searchByTicker("AAPL");
         return stockStateRepoitory.findAll();
     }
 
@@ -34,10 +34,12 @@ public class StocksServiceController {
     }
 
     @GetMapping("/stocks/{ticker}")
-    StockState one(@PathVariable String ticker) {
-        return stockStateRepoitory.findByTicker(ticker)
-                //.orElseThrow(() -> new StockNotFoundException(ticker))
-        ;
+    TCSSearchByTickerResponseJson one(@PathVariable String ticker) {
+        return tinkoffApi.searchByTicker(ticker);
+
+//        stockStateRepoitory.findByTicker(ticker)
+//                //.orElseThrow(() -> new StockNotFoundException(ticker))
+//        ;
     }
 
 }
