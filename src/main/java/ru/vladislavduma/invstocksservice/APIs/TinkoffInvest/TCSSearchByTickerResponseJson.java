@@ -10,15 +10,16 @@ import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TCSSearchByTickerResponseJson {
 
-    Integer total;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    String message;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    String code;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<TCSSearchByTickerResponseInstrumentJson> instruments;
+    private Integer total;
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String message;
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String code;
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<TCSSearchByTickerResponseInstrumentJson> instruments;
 
     public List<TCSSearchByTickerResponseInstrumentJson> getInstruments() {
         return instruments;

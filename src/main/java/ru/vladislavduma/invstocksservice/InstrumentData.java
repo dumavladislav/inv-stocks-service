@@ -1,10 +1,8 @@
-package ru.vladislavduma.invstocksservice.APIs.TinkoffInvest;
+package ru.vladislavduma.invstocksservice;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class InstrumentData {
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class TCSSearchByTickerResponseInstrumentJson {
+    // Tinkoff Fields
     private String figi;
     private String ticker;
     private String isin;
@@ -13,6 +11,24 @@ public class TCSSearchByTickerResponseInstrumentJson {
     private String currency;
     private String name;
     private String type;
+
+    // Additional
+    private Double currentPrice;
+
+
+    public InstrumentData() {}
+
+    public InstrumentData(String figi, String ticker, String isin, Double minPriceIncrement, Integer lot, String currency, String name, String type, Double currentPrice) {
+        this.figi = figi;
+        this.ticker = ticker;
+        this.isin = isin;
+        this.minPriceIncrement = minPriceIncrement;
+        this.lot = lot;
+        this.currency = currency;
+        this.name = name;
+        this.type = type;
+        this.currentPrice = currentPrice;
+    }
 
     public String getFigi() {
         return figi;
@@ -76,5 +92,14 @@ public class TCSSearchByTickerResponseInstrumentJson {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+
+    public Double getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(Double currentPrice) {
+        this.currentPrice = currentPrice;
     }
 }

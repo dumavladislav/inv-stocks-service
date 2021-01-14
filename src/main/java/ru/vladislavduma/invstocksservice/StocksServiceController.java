@@ -34,7 +34,7 @@ public class StocksServiceController {
     }
 
     @GetMapping("/stocks/{ticker}")
-    TCSSearchByTickerResponseJson one(@PathVariable String ticker) {
+    StockServiceResponseJson one(@PathVariable String ticker) {
         return tinkoffApi.searchByTicker(ticker);
 
 //        stockStateRepoitory.findByTicker(ticker)

@@ -14,6 +14,13 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import ru.vladislavduma.invstocksservice.APIs.JWTTemplate;
+import ru.vladislavduma.invstocksservice.ErrorHandling.StockServiceError;
+import ru.vladislavduma.invstocksservice.ErrorHandling.TickerNotFoundException;
+import ru.vladislavduma.invstocksservice.InstrumentData;
+import ru.vladislavduma.invstocksservice.StockServiceResponseJson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @PropertySource("classpath:application.properties")
@@ -40,24 +47,63 @@ public class TCSApi extends JWTTemplate {
         objectMapper.disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
     }
 
-    public TCSSearchByTickerResponseJson searchByTicker(String ticker) {
+    public StockServiceResponseJson searchByTicker(String ticker) {
 
         try {
-            ResponseEntity<TCSResponse<TCSSearchByTickerResponseJson>> response =
+            ResponseEntity<TCSResponse<TCSSearchByTickerResponseJson>> responseSearchByTicker =
                     restTemplate.exchange(
                             baseUrl + "/market/search/by-ticker?ticker=" + ticker,
                             HttpMethod.GET, entity,
                             new ParameterizedTypeReference<TCSResponse<TCSSearchByTickerResponseJson>>() {
                             });
-            logger.info("BODY" + response.getBody().toString());
-            logger.info("PAYLOAD" + response.getBody().getPayload().toString());
+//            logger.info("BODY" + response.getBody().toString());
+//            logger.info("PAYLOAD" + response.getBody().getPayload().toString());
 
-            return response.getBody().getPayload();
+            if (responseSearchByTicker.getBody().getPayload().getTotal() > 0) {
+                TCSSearchByTickerResponseInstrumentJson instrumentJson = responseSearchByTicker.getBody().getPayload().getInstruments().get(0);
+
+                ResponseEntity<TCSResponse<TCSOrderBookResponseJson>> responseOrderBook =
+                        restTemplate.exchange(
+                                baseUrl + "/market/orderbook?figi=" + instrumentJson.getFigi() + "&depth=0",
+                                HttpMethod.GET, entity,
+                                new ParameterizedTypeReference<TCSResponse<TCSOrderBookResponseJson>>() {
+                                });
+
+                logger.info(responseOrderBook.getBody().getPayload().toString());
+
+                List<InstrumentData> instrumentsList = new ArrayList<InstrumentData>();
+                instrumentsList.add(new InstrumentData(
+                        instrumentJson.getFigi(),
+                        instrumentJson.getTicker(),
+                        instrumentJson.getIsin(),
+                        instrumentJson.getMinPriceIncrement(),
+                        instrumentJson.getLot(),
+                        instrumentJson.getCurrency(),
+                        instrumentJson.getName(),
+                        instrumentJson.getType(),
+                        responseOrderBook.getBody().getPayload().getLastPrice()
+                ));
+
+                return new StockServiceResponseJson(
+                        null,
+                        "OK",
+                        instrumentsList
+                );
+            }
+            else throw new TickerNotFoundException();
         }
         catch (RestClientException e) {
-            logger.error("Error Calling TCS");
+            return new StockServiceResponseJson(
+                    null,
+                    "ERROR",
+                    new StockServiceError("TCS_ERR_001", "Tinkoff Service Error"));
         }
-        return null;
+        catch (Exception e) {
+            return new StockServiceResponseJson(
+                    null,
+                    "ERROR",
+                    new StockServiceError("ERR", e.getMessage()));
+        }
     }
 
 }
